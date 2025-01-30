@@ -45,7 +45,8 @@ public class VideoClubService {
         VideoClub savedVideoClub = findVideoClubById(videoClub.getId());
         savedVideoClub.setName(videoClub.getName());
         savedVideoClub.setPhone(videoClub.getPhone());
-        return savedVideoClub;
+        System.out.println("VideoClub changed");
+        return videoClubRepository.save(savedVideoClub);
     }
 
 }
