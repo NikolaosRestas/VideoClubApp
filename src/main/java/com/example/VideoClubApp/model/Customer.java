@@ -1,10 +1,10 @@
 package com.example.VideoClubApp.model;
 
 import jakarta.persistence.*;
-
-import java.util.Objects;
+import lombok.Builder;
 
 @Entity
+@Builder
 @Table(name="customer")
 public class Customer {
     @Id
@@ -60,6 +60,10 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setId(Long id){
+        this.id = id;
     }
 
     public void setVideoClub(VideoClub videoClub) {
