@@ -25,6 +25,12 @@ public class CustomerController {
         return new ResponseEntity<List<Customer>>(customerService.getAllCustomers(),HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> getCustomerById(@PathVariable("id") Long id){
+        System.out.println("Customer has been found");
+        return new ResponseEntity<>(customerService.findCustomerById(id),HttpStatus.OK);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Customer> addCustomer(@RequestBody CustomerRequestDto customer){
         final Customer createdCustomer = customerService.insertCustomer(customer);
