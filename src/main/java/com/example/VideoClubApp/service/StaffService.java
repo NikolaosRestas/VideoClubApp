@@ -7,6 +7,7 @@ import com.example.VideoClubApp.repository.StaffRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StaffService {
@@ -20,6 +21,10 @@ public class StaffService {
 
     public List<Staff> getAllStaff(){
         return staffRepository.findAll();
+    }
+
+    public Staff findStaffById(Long id){
+        return staffRepository.findById(id).orElse(null);
     }
 
     public boolean deleteAllStaff(){
@@ -44,5 +49,17 @@ public class StaffService {
                 .videoClub(videoClub).build();
 
         return staffRepository.save(staff);
+    }
+
+    public Staff updateStaff(StaffRequestDto staffRequestDto, Long id){
+        final Staff updatedStaff = findStaffById(id);
+        updatedStaff.setName(staffRequestDto.getName());
+        updatedStaff.setPhone(staffRequestDto.getPhone());
+        final VideoClub videoClub = videoClubService.findVideoClubById(staffRequestDto.getVideoClubId());
+
+        updatedStaff.setVideoClub(videoClub);
+        System.out.println("Staff updated");
+        return staffRepository.save(updatedStaff);
+
     }
 }
