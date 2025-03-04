@@ -23,4 +23,48 @@ public class Cd {
     @JoinColumn(name = "customer_key")
     private Customer customer;
 
+    public Cd(){}
+
+    public Cd(Long id, String name, String artist, VideoClub videoClub, Customer customer){
+        this.id = id;
+        this.name = name;
+        this.artist = artist;
+        this.videoClub = videoClub;
+        this.customer = customer;
+    }
+
+    public Long getId(){
+        return this.id;
+    }
+    public String getName(){
+        return this.name;
+    }
+
+    public String getArtist(){
+        return this.artist;
+    }
+    public VideoClub getVideoClub(){
+        return this.videoClub;
+    }
+
+    public Customer getCustomer(){
+        return this.customer;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setArtist(String artist){
+        this.artist = artist;
+    }
+
+    public void setVideoClub(VideoClub videoClub){
+        this.videoClub = videoClub;
+    }
+
+    public void setCustomer(Customer customer){
+        this.customer = customer;
+    }
+
 }
