@@ -1,17 +1,25 @@
 import './App.css';
-import Navbar from './navbar/navbar';
-import HomePage from './home/home';
-import { BrowserRouter as Router, Route, Switch, Routes} from 'react-router-dom';
+import {Component} from "react";
+import { Switch, Route } from 'react-router-dom';
+import Navbar from "./navbar/Navbar";
+import VideoclubsPage from "./videoclubs/videoclubs";
+import HomePage from "./home/home";
 
-const App = () => {
-  return (
-    <Router>
-      <Navbar/>
-      <Switch>
-        <Route exact path="/homePage" component={HomePage} />
-      </Switch>
-    </Router>
-  );
-};
+class App extends Component {
+
+    render() {
+        return (
+            <div>
+                <Navbar/>
+                <Switch>
+                    <Route path="/homePage" component={HomePage} />
+                    <Route path="/videoClubs" component={VideoclubsPage} />
+                </Switch>
+
+            </div>
+        );
+    }
+}
 
 export default App;
+

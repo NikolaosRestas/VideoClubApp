@@ -4,7 +4,7 @@ import {Typography} from "@mui/material";
 const HomePage = () => {
     return (
         <div className="container mx-auto mt-8">
-            "Welcome to VideoClub Application"
+            <Typography color="danger" variant="plain"> Welcome to VideoClub App </Typography>
         </div>
     );
 };
