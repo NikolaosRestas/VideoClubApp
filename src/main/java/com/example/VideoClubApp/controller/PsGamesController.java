@@ -29,7 +29,7 @@ public class PsGamesController {
         return new ResponseEntity<>(psGamesService.getPsGameById(id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public boolean deletePsGameById(@PathVariable("id") Long id){
         psGamesService.deletePsGameById(id);
         return true;

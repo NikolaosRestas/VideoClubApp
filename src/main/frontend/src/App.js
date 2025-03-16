@@ -7,6 +7,8 @@ import HomePage from "./home/home";
 import StaffsPage from "./staff/staffs";
 import CustomersPage from "./customers/customers";
 import CdsPage from "./cd/cds";
+import PsGamesPage from "./psgames/psgames";
+import MoviesPage from "./movies/movies";
 
 class App extends Component {
 
@@ -20,6 +22,8 @@ class App extends Component {
                     <Route path="/staff" component={StaffsPage} />
                     <Route path="/customers" component={CustomersPage} />
                     <Route path="/cd" component={CdsPage} />
+                    <Route path="/PsGames" component={PsGamesPage} />
+                    <Route path="/movies" component={MoviesPage} />
                 </Switch>
             </div>
         );

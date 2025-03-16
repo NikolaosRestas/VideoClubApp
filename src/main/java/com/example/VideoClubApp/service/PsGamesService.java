@@ -26,7 +26,7 @@ public class PsGamesService {
     }
 
     public boolean deletePsGameById(Long id){
-        psGamesRepository.findById(id);
+        psGamesRepository.deleteById(id);
         return true;
     }
 

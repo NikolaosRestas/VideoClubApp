@@ -8,15 +8,15 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {Alert,Button} from "@mui/material";
 import {useState} from "react";
-import EditCdModal from "./EditCdModal";
+import EditPsGameModal from "./EditPsGameModal";
 
-export default function CdsTableComponent({cds,onChange}){
+export default function PsGamesTableComponent({PsGames,onChange}){
     const [isEditModalOpen, setIsEditModalOpen] = useState({});
     const [selectedClient, setSelectedClient] = useState(null);
     const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
 
-    const handleEditModalOpen=(cd)=>{
-        setSelectedClient(cd);
+    const handleEditModalOpen=(PsGame)=>{
+        setSelectedClient(PsGame);
         setIsEditModalOpen(true);
     }
 
@@ -24,19 +24,20 @@ export default function CdsTableComponent({cds,onChange}){
         setIsEditModalOpen(false);
     }
 
-    const handleDelete = (cd) => {
-           fetch(`/cd/delete/${cd.id}`, {
+    const handleDelete = (PsGame) => {
+           fetch(`/PsGames/delete/${PsGame.id}`, {
                method: 'DELETE',
                headers: { 'Content-Type': 'application/json' },
            })
                .then(response => {
                    if (response.ok) {
-                       setIsSuccessfulDelete({ cdName: cd.name });
-                       setIsSuccessfulDelete({ cdArtist: cd.artist});
+                       setIsSuccessfulDelete({ PsGameTitle: PsGame.title });
+                       setIsSuccessfulDelete({ PsGameConsole: PsGame.console});
+                       setIsSuccessfulDelete({ PsGameCompany: PsGame.company});
                        setTimeout(() => {
                            setIsSuccessfulDelete(false);
                        }, 5000);
-                       onChange(cds.filter(c => c.id !== cd.id));
+                       onChange(PsGames.filter(c => c.id !== PsGame.id));
                    }
                });
        };
@@ -48,32 +49,34 @@ export default function CdsTableComponent({cds,onChange}){
                     <TableHead>
                         <TableRow>
                             <TableCell className="font-bold">Id</TableCell>
-                            <TableCell align="right" className="font-bold">Name</TableCell>
-                            <TableCell align="right" className="font-bold">Artist</TableCell>
+                            <TableCell align="right" className="font-bold">Title</TableCell>
+                            <TableCell align="right" className="font-bold">Console</TableCell>
+                            <TableCell align="right" className="font-bold">Company</TableCell>
                             <TableCell align="right" className="font-bold">Videoclub</TableCell>
                             <TableCell align="right" className="font-bold">Customer</TableCell>
                             <TableCell align="right" className="font-bold">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {cds.map((cd) => (
+                        {PsGames.map((PsGame) => (
                             <TableRow
-                                key={cd.id}
+                                key={PsGame.id}
                                 className="hover:bg-gray-100"
                             >
                                 <TableCell component="th" scope="row" className="py-3">
-                                    {cd.id}
+                                    {PsGame.id}
                                 </TableCell>
-                                <TableCell align="right" className="py-3">{cd.name}</TableCell>
-                                <TableCell align="right" className="py-3">{cd.artist}</TableCell>
-                                <TableCell align="right" className="py-3">{cd.videoClub.name}</TableCell>
-                                <TableCell align="right" className="py-3">{cd.customer.name}</TableCell>
+                                <TableCell align="right" className="py-3">{PsGame.title}</TableCell>
+                                <TableCell align="right" className="py-3">{PsGame.console}</TableCell>
+                                <TableCell align="right" className="py-3">{PsGame.company}</TableCell>
+                                <TableCell align="right" className="py-3">{PsGame.videoClub.name}</TableCell>
+                                <TableCell align="right" className="py-3">{PsGame.customer.name}</TableCell>
                                 <TableCell align="right" className="py-3">
-                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => handleEditModalOpen(cd)}>
+                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => handleEditModalOpen(PsGame)}>
                                         Edit
                                     </Button>
                                     <span className="inline-block w-4"></span> {/* This creates space */}
-                                    <Button variant="contained" color="primary" onClick={() => handleDelete(cd)}>
+                                    <Button variant="contained" color="primary" onClick={() => handleDelete(PsGame)}>
                                         Delete
                                     </Button>
                                 </TableCell>
@@ -84,7 +87,7 @@ export default function CdsTableComponent({cds,onChange}){
             </TableContainer>
 
             {selectedClient && (
-                <EditCdModal
+                <EditPsGameModal
                     isOpen={isEditModalOpen}
                     onClose={handleEditModalClose}
                     clientData={selectedClient}
@@ -95,7 +98,7 @@ export default function CdsTableComponent({cds,onChange}){
                 <div className="relative h-32 flex flex-nowrap">
                     <div className="absolute inset-x-0 bottom-0 h-16 flex flex-nowrap">
                         <Alert severity="success">
-                            The cd {isSuccessfulDelete.cdName} was deleted successfully!
+                            The psgame {isSuccessfulDelete.PsGameTitle} was deleted successfully!
                         </Alert>
                     </div>
                 </div>
