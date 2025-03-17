@@ -68,6 +68,9 @@ public class MovieService {
         final VideoClub videoClub = videoClubService.findVideoClubById(movieRequestDto.getVideoClubId());
         final Customer customer = customerService.findCustomerById(movieRequestDto.getCustomerId());
 
+        savedMovie.setVideoClub(videoClub);
+        savedMovie.setCustomer(customer);
+
         System.out.println("Movie with id: " + id +" " + "has been updated");
 
         return movieRepository.save(savedMovie);

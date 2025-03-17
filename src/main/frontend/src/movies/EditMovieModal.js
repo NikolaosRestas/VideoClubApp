@@ -5,7 +5,7 @@ import {Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Al
 const EditMovieModal=({isOpen,onClose,clientData,onSave})=>{
      const [editedData,setEditedData] = useState({...clientData});
      const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
-     const [videoclubsData, setVideoclubsData] = useState ([]);
+     const [videoClubsData, setVideoClubsData] = useState ([]);
      const [customersData, setCustomersData] = useState ([]);
 
     useEffect(() => {
@@ -14,7 +14,7 @@ const EditMovieModal=({isOpen,onClose,clientData,onSave})=>{
             fetch('/customers').then(response => response.json())
         ])
         .then(([videoClubsData, customersData]) => {
-            setVideoclubsData(videoClubsData);
+            setVideoClubsData(videoClubsData);
             setCustomersData(customersData);
         })
         .catch(error => {
@@ -34,8 +34,12 @@ const EditMovieModal=({isOpen,onClose,clientData,onSave})=>{
     const handleSave = () => {
         clientData.title = editedData.title;
         clientData.year = editedData.year;
+        clientData.videoClub = editedData.videoClub;
+        clientData.videoClubId = editedData.videoClubId;
+        clientData.customer = editedData.customer;
+        clientData.customerId = editedData.customerId;
 
-        fetch(`/movies/${clientData.id}`,
+        fetch(`/movies/update/${clientData.id}`,
             {
                 method: 'PUT',
                 body: JSON.stringify(clientData),
@@ -64,13 +68,13 @@ const EditMovieModal=({isOpen,onClose,clientData,onSave})=>{
                 ...prevData,
                 [name]: value,
             }));
-            if (name === 'videoclubId') {
-                let videoclub = videoclubsData.find(c => c.id === value);
-                console.log('videoclub: ', videoclub);
+            if (name === 'videoClubId') {
+                let videoClub = videoClubsData.find(c => c.id === value);
+                console.log('videoClub: ', videoClub);
                 setEditedData((prevData) => ({
                     ...prevData,
                     // eslint-disable-next-line
-                    ['videoclub']: videoclub,
+                    ['videoClub']: videoClub,
                 }));
             }
 
@@ -107,20 +111,20 @@ const EditMovieModal=({isOpen,onClose,clientData,onSave})=>{
                         margin="normal"
                     />
                     <Select
-                        label="Videoclub"
-                        name="videoclubId"
+                        label="VideoClub"
+                        name="videoClubId"
                         value={editedData.videoClubId || editedData.videoClub.id}
                         onChange={(e) => handleInputChange(e)}
                         fullWidth
                         margin="normal"
                     >
                         {
-                            videoclubsData.map((videoclub) => (
+                            videoClubsData.map((videoclub) => (
                                 <MenuItem key={videoclub.id} value={videoclub.id}> {videoclub.name} </MenuItem>))
                         }
                     </Select>
                     <Select
-                        label="Customer"
+                        label="customer"
                         name="customerId"
                         value={editedData.customerId || editedData.customer.id}
                         onChange={(e) => handleInputChange(e)}

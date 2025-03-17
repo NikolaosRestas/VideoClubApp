@@ -4,13 +4,13 @@ import {Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Al
 export default function EditCustomerModal({isOpen, onClose, clientData, onSave}) {
     const [editedData, setEditedData] = useState({...clientData});
     const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
-    const [videoclubsData, setVideoclubsData] = useState ([]);
+    const [videoClubsData, setVideoClubsData] = useState ([]);
 
     useEffect(() => {
         fetch('/videoClubs')
             .then(response => response.json())
             .then(data => {
-                setVideoclubsData(data);
+                setVideoClubsData(data);
             })
             .catch(error => {
                 console.error('Error fetching the videoclubs:', error);
@@ -25,8 +25,10 @@ export default function EditCustomerModal({isOpen, onClose, clientData, onSave})
         clientData.name = editedData.name;
         clientData.phone = editedData.phone;
         clientData.email = editedData.email;
+        clientData.videoClub = editedData.videoClub;
+        clientData.videoClubId = editedData.videoClubId;
 
-        fetch(`/customers/${clientData.id}`,
+        fetch(`/customers/update/${clientData.id}`,
             {
                 method: 'PUT',
                 body: JSON.stringify(clientData),
@@ -59,13 +61,13 @@ export default function EditCustomerModal({isOpen, onClose, clientData, onSave})
             ...prevData,
             [name]: value,
         }));
-        if (name === 'videoclubId') {
-            let videoclub = videoclubsData.find(c => c.id === value);
-            console.log('videoclub: ', videoclub);
+        if (name === 'videoClubId') {
+            let videoClub = videoClubsData.find(c => c.id === value);
+            console.log('videoClub: ', videoClub);
             setEditedData((prevData) => ({
                 ...prevData,
                 // eslint-disable-next-line
-                ['videoclub']: videoclub,
+                videoClub: videoClub,
             }));
         }
 
@@ -100,15 +102,15 @@ export default function EditCustomerModal({isOpen, onClose, clientData, onSave})
                         margin="normal"
                     />
                     <Select
-                        label="Videoclub"
-                        name="videoclubId"
+                        label="VideoClub"
+                        name="videoClubId"
                         value={editedData.videoClubId || editedData.videoClub.id}
                         onChange={(e) => handleInputChange(e)}
                         fullWidth
                         margin="normal"
                     >
                         {
-                            videoclubsData.map((videoclub) => (
+                            videoClubsData.map((videoclub) => (
                                 <MenuItem key={videoclub.id} value={videoclub.id}> {videoclub.name} </MenuItem>))
                         }
                     </Select>

@@ -1,4 +1,3 @@
-import Loader from "../loader/loader";
 import React, {useEffect, useState} from 'react';
 import CdsTableComponent from "./CdsTableComponent";
 import {Button} from "@mui/material";
@@ -6,23 +5,26 @@ import NewCdModal from "./NewCdModal";
 
 const CdsPage=()=>{
     const [cdsData,setCdsData] = useState([]);
-    const [isLoading,setIsLoading] = useState(true);
     const [isNewCdModalOpen,setNewCdModalOpen] = useState(false);
 
     useEffect(() => {
+        // Function to fetch customers data from the API
         fetch('/cd')
             .then(response => response.json())
             .then(data => {
                 setCdsData(data);
-                setIsLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching cds:', error);
-                setIsLoading(false); // Ensure loading state is updated even on error
             });
+
+        return () => {
+            // Any cleanup code can go here
+        };
     }, []);
 
-    const newCd=()=>{
+    useEffect(() => {
+       setCdsData(cdsData); // Update local state when the clientData prop changes
+    }, [cdsData]);
+
+    function newCd(){
         setNewCdModalOpen(true);
     }
 
@@ -30,10 +32,13 @@ const CdsPage=()=>{
         setNewCdModalOpen(false);
     };
 
-    const handleSaveNewCd = cd => {
-        setCdsData(prevCds => [...prevCds, cd]);
-        handleCloseNewCdModal();
-    }
+   const updateCds = (cd) => {
+        console.log('cds : ',cd);
+        console.log('cds: ',cdsData);
+
+        setCdsData(prevCds=>[...prevCds,cd]);
+        console.log('Cds meta: ', cdsData);
+    };
 
     return (
         <div className="flex justify-center">
@@ -46,18 +51,16 @@ const CdsPage=()=>{
                     </Button>
                 </div>
 
-                {isLoading ? (
-                    <Loader />
-                ) : (
-                    <CdsTableComponent cds={cdsData} onChange={setCdsData} />
-                )}
+
+                 <CdsTableComponent cds={cdsData} onChange={setCdsData} />
+
             </div>
 
             {isNewCdModalOpen && (
                 <NewCdModal
                     isOpen={isNewCdModalOpen}
                     onClose={handleCloseNewCdModal}
-                    onSave={handleSaveNewCd}
+                    onSave={updateCds}
                 />
             )}
         </div>

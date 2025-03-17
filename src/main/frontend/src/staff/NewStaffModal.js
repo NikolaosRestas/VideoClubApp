@@ -1,33 +1,29 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField,MenuItem,Select} from '@mui/material';
 
-export default function NewStaffModal({isOpen, onClose, onSave}) {
+export default function NewCustomerModal({isOpen, onClose, onSave}) {
     const [staff, setStaff] = useState({name: ""});
     const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
-    const [videoclubsData, setVideoclubsData] = useState([]);
+    const [videoClubsData, setVideoClubsData] = useState([]);
 
-    useEffect(() => {
-        fetch('/videoClubs')
-            .then(response => response.json())
-            .then(data => {
-                setVideoclubsData(data);
+     useEffect(() => {
+            Promise.all([
+                fetch('/videoClubs').then(response => response.json()),
+                fetch('/customers').then(response => response.json())
+            ])
+            .then(([videoClubsData, customersData]) => {
+                setVideoClubsData(videoClubsData);
             })
             .catch(error => {
-                console.error('Error fetching videoclubs:', error);
+                console.error('Error fetching data:', error);
             });
-    }, []);
+        }, []);
 
     useEffect(() => {
         setStaff({...staff}); // Update local state when the clientData prop changes
     }, [staff]);
 
     const handleSave = () => {
-
-        if (!isPhoneNumberValid(staff.phone)) {
-              alert('Invalid phone number (must be 10 digits)');
-              return;
-        }
-
 
         fetch(`/staff/add`,
             {
@@ -65,18 +61,13 @@ export default function NewStaffModal({isOpen, onClose, onSave}) {
         }));
     };
 
-        const isPhoneNumberValid = (phone) => {
-            const phonePattern = /^\d{10}$/;
-            return phonePattern.test(phone);
-          };
-
     return (
         <React.Fragment>
             <Dialog open={isOpen} onClose={onClose}>
-                <DialogTitle>New Staff</DialogTitle>
+                <DialogTitle>New Customer</DialogTitle>
                 <DialogContent>
                     <TextField
-                        label="Staff Name"
+                        label="Name"
                         name="name"
                         value={staff.name}
                         onChange={(e) => handleInputChange(e)}
@@ -92,7 +83,7 @@ export default function NewStaffModal({isOpen, onClose, onSave}) {
                         margin="normal"
                     />
                     <TextField
-                        label="VideoClub"
+                        label="videoclub"
                         name="videoClubId"
                         value={staff.videoClubId}
                         onChange={(e) => handleInputChange(e)}
@@ -100,16 +91,16 @@ export default function NewStaffModal({isOpen, onClose, onSave}) {
                         margin="normal"
                     />
                     <Select
-                        label="Videoclub"
+                        label="VideoClub"
                         name="videoClubId"
-                        value={staff.videoClubId}
+                        value={staff.videoClubId || 'default'}
                         onChange={(e) => handleInputChange(e)}
                         fullWidth
                         margin="normal"
                     >
-                        <MenuItem value="default" disabled>Select a Videoclub </MenuItem>
+                        <MenuItem value="default" disabled>Select a VideoClub </MenuItem>
                         {
-                            videoclubsData.map((videoclub) => (
+                            videoClubsData.map((videoclub) => (
                                 <MenuItem key={videoclub.id} value={videoclub.id}> {videoclub.name} </MenuItem>))
                         }
                     </Select>

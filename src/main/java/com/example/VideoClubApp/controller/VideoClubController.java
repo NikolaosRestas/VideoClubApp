@@ -52,6 +52,7 @@ public class VideoClubController {
     @PutMapping("/{id}")
     public ResponseEntity<VideoClub> updateVideoClub(@RequestBody VideoClub videoClub){
         videoClubService.updateVideoClub(videoClub);
-        return new ResponseEntity(HttpStatus.OK);
+        VideoClub updatedVideoClub = videoClubService.updateVideoClub(videoClub);
+        return new ResponseEntity<>(updatedVideoClub,HttpStatus.OK);
     }
 }

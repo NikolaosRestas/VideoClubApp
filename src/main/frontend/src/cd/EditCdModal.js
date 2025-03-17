@@ -5,7 +5,7 @@ export default function EditCdModal({isOpen, onClose, clientData, onSave}) {
 
     const [editedData, setEditedData] = useState({...clientData});
     const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
-    const [videoclubsData, setVideoclubsData] = useState ([]);
+    const [videoClubsData, setVideoClubsData] = useState ([]);
     const [customersData, setCustomersData] = useState ([]);
 
     useEffect(() => {
@@ -14,7 +14,7 @@ export default function EditCdModal({isOpen, onClose, clientData, onSave}) {
             fetch('/customers').then(response => response.json())
         ])
         .then(([videoClubsData, customersData]) => {
-            setVideoclubsData(videoClubsData);
+            setVideoClubsData(videoClubsData);
             setCustomersData(customersData);
         })
         .catch(error => {
@@ -33,8 +33,12 @@ export default function EditCdModal({isOpen, onClose, clientData, onSave}) {
     const handleSave = () => {
         clientData.name = editedData.name;
         clientData.artist = editedData.artist;
+        clientData.videoClub = editedData.videoClub;
+        clientData.videoClubId = editedData.videoClubId;
+        clientData.customer = editedData.customer;
+        clientData.customerId = editedData.customerId;
 
-        fetch(`/cd/${clientData.id}`,
+        fetch(`/cd/update/${clientData.id}`,
             {
                 method: 'PUT',
                 body: JSON.stringify(clientData),
@@ -63,13 +67,13 @@ export default function EditCdModal({isOpen, onClose, clientData, onSave}) {
             ...prevData,
             [name]: value,
         }));
-        if (name === 'videoclubId') {
-            let videoclub = videoclubsData.find(c => c.id === value);
-            console.log('videoclub: ', videoclub);
+        if (name === 'videoClubId') {
+            let videoClub = videoClubsData.find(c => c.id === value);
+            console.log('videoClub: ', videoClub);
             setEditedData((prevData) => ({
                 ...prevData,
                 // eslint-disable-next-line
-                ['videoclub']: videoclub,
+                ['videoClub']: videoClub,
             }));
         }
 
@@ -79,7 +83,7 @@ export default function EditCdModal({isOpen, onClose, clientData, onSave}) {
             setEditedData((prevData) => ({
                 ...prevData,
                 // eslint-disable-next-line
-                ['customer']: customer,
+                customer: customer,
             }));
         }
 
@@ -88,7 +92,7 @@ export default function EditCdModal({isOpen, onClose, clientData, onSave}) {
     return (
         <React.Fragment>
             <Dialog open={isOpen} onClose={onClose}>
-                <DialogTitle>Edit Customer</DialogTitle>
+                <DialogTitle>Edit Cd</DialogTitle>
                 <DialogContent>
                     <TextField
                         label="Name"
@@ -107,20 +111,20 @@ export default function EditCdModal({isOpen, onClose, clientData, onSave}) {
                         margin="normal"
                     />
                     <Select
-                        label="Videoclub"
-                        name="videoclubId"
+                        label="videoClub"
+                        name="videoClubId"
                         value={editedData.videoClubId || editedData.videoClub.id}
                         onChange={(e) => handleInputChange(e)}
                         fullWidth
                         margin="normal"
                     >
                         {
-                            videoclubsData.map((videoclub) => (
+                            videoClubsData.map((videoclub) => (
                                 <MenuItem key={videoclub.id} value={videoclub.id}> {videoclub.name} </MenuItem>))
                         }
                     </Select>
                     <Select
-                        label="Customer"
+                        label="customer"
                         name="customerId"
                         value={editedData.customerId || editedData.customer.id}
                         onChange={(e) => handleInputChange(e)}

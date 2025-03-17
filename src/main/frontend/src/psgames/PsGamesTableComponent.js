@@ -15,25 +15,23 @@ export default function PsGamesTableComponent({PsGames,onChange}){
     const [selectedClient, setSelectedClient] = useState(null);
     const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
 
-    const handleEditModalOpen=(PsGame)=>{
+   function onEdit(PsGame){
+        console.log('Edit PsGame:',PsGame);
         setSelectedClient(PsGame);
         setIsEditModalOpen(true);
-    }
+   }
 
     const handleEditModalClose=()=>{
         setIsEditModalOpen(false);
     }
 
-    const handleDelete = (PsGame) => {
+    function onDelete (PsGame){
            fetch(`/PsGames/delete/${PsGame.id}`, {
                method: 'DELETE',
                headers: { 'Content-Type': 'application/json' },
            })
                .then(response => {
                    if (response.ok) {
-                       setIsSuccessfulDelete({ PsGameTitle: PsGame.title });
-                       setIsSuccessfulDelete({ PsGameConsole: PsGame.console});
-                       setIsSuccessfulDelete({ PsGameCompany: PsGame.company});
                        setTimeout(() => {
                            setIsSuccessfulDelete(false);
                        }, 5000);
@@ -72,11 +70,11 @@ export default function PsGamesTableComponent({PsGames,onChange}){
                                 <TableCell align="right" className="py-3">{PsGame.videoClub.name}</TableCell>
                                 <TableCell align="right" className="py-3">{PsGame.customer.name}</TableCell>
                                 <TableCell align="right" className="py-3">
-                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => handleEditModalOpen(PsGame)}>
+                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => onEdit(PsGame)}>
                                         Edit
                                     </Button>
                                     <span className="inline-block w-4"></span> {/* This creates space */}
-                                    <Button variant="contained" color="primary" onClick={() => handleDelete(PsGame)}>
+                                    <Button variant="contained" color="primary" onClick={() => onDelete(PsGame,PsGames)}>
                                         Delete
                                     </Button>
                                 </TableCell>
@@ -91,6 +89,7 @@ export default function PsGamesTableComponent({PsGames,onChange}){
                     isOpen={isEditModalOpen}
                     onClose={handleEditModalClose}
                     clientData={selectedClient}
+                    onSave={onChange}
                 />
             )}
 

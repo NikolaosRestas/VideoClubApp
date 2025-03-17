@@ -16,12 +16,13 @@ export default function CustomersTableComponent({ customers, onChange }) {
     const [selectedClient, setSelectedClient] = useState(null);
     const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
 
-    const handleEditModalOpen = (customer) => {
+    function onEdit(customer){
+        console.log('Edit Customer', customer);
         setSelectedClient(customer);
         setIsEditModalOpen(true);
-    };
+    }
 
-   const handleDelete = (customer) => {
+   function onDelete(customer){
            fetch(`/customers/delete/${customer.id}`, {
                method: 'DELETE',
                headers: { 'Content-Type': 'application/json' },
@@ -71,11 +72,11 @@ export default function CustomersTableComponent({ customers, onChange }) {
                                 <TableCell align="right" className="py-3">{customer.email}</TableCell>
                                 <TableCell align="right" className="py-3">{customer.videoClub.name}</TableCell>
                                 <TableCell align="right" className="py-3">
-                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => handleEditModalOpen(customer)}>
+                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => onEdit(customer)}>
                                         Edit
                                     </Button>
                                     <span className="inline-block w-4"></span> {/* This creates space */}
-                                    <Button variant="contained" color="primary" onClick={() => handleDelete(customer)}>
+                                    <Button variant="contained" color="primary" onClick={() => onDelete(customer)}>
                                         Delete
                                     </Button>
                                 </TableCell>
@@ -90,6 +91,7 @@ export default function CustomersTableComponent({ customers, onChange }) {
                     isOpen={isEditModalOpen}
                     onClose={handleEditModalClose}
                     clientData={selectedClient}
+                    onSave={onChange}
                 />
             )}
 

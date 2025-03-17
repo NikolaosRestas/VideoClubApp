@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"})
-
 @RequestMapping("/staff")
 public class StaffController {
     private final StaffService staffService;
@@ -53,7 +52,8 @@ public class StaffController {
     }
 
     @PutMapping("/update/{id}")
-    public Staff updatedStaff(@RequestBody StaffRequestDto staff, @PathVariable("id") Long id){
-        return staffService.updateStaff(staff,id);
+    public ResponseEntity<Staff> updatedStaff(@RequestBody StaffRequestDto staff, @PathVariable("id") Long id){
+        Staff updatedStaff = staffService.updateStaff(staff,id);
+        return new ResponseEntity<>(updatedStaff,HttpStatus.OK);
     }
 }

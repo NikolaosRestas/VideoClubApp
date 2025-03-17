@@ -1,4 +1,3 @@
-import Loader from "../loader/loader";
 import React, {useEffect, useState} from 'react';
 import {Button} from "@mui/material";
 import PsGamesTableComponent from "./PsGamesTableComponent";
@@ -6,24 +5,27 @@ import NewPsGameModal from "./NewPsGameModal";
 
 const PsGamesPage=()=>{
     const [psgamesData,setpsgamesData] = useState([]);
-    const [isLoading,setIsLoading] = useState(true);
     const [isNewPsGameModalOpen,setNewPsGameModal] = useState(false);
 
 
     useEffect(() => {
+        // Function to fetch customers data from the API
         fetch('/PsGames')
             .then(response => response.json())
             .then(data => {
                 setpsgamesData(data);
-                setIsLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching psgames:', error);
-                setIsLoading(false); // Ensure loading state is updated even on error
             });
+
+        return () => {
+            // Any cleanup code can go here
+        };
     }, []);
 
-    const newPsGame=()=>{
+    useEffect(() => {
+        setpsgamesData(psgamesData); // Update local state when the clientData prop changes
+    }, [psgamesData]);
+
+    function newPsGame(){
         setNewPsGameModal(true);
     }
 
@@ -31,10 +33,13 @@ const PsGamesPage=()=>{
         setNewPsGameModal(false);
     }
 
-    const handleSaveNewPsGame = psgame =>{
-        setpsgamesData(prevpsgames=>[...prevpsgames,psgame]);
-        handleCloseNewPsGameModal();
-    }
+    const updatePsGames = (psgame) => {
+        console.log('psgames : ',psgame);
+        console.log('psgames: ',psgamesData);
+
+        setpsgamesData(prevPsGames=>[...prevPsGames,psgame]);
+        console.log('PsGames meta: ', psgamesData);
+    };
 
     return (
         <div className="flex justify-center">
@@ -47,18 +52,16 @@ const PsGamesPage=()=>{
                     </Button>
                 </div>
 
-                {isLoading ? (
-                    <Loader />
-                ) : (
-                    <PsGamesTableComponent PsGames={psgamesData} onChange={setpsgamesData} />
-                )}
+
+                 <PsGamesTableComponent PsGames={psgamesData} onChange={setpsgamesData} />
+
             </div>
 
             {isNewPsGameModalOpen && (
                 <NewPsGameModal
                     isOpen={isNewPsGameModalOpen}
                     onClose={handleCloseNewPsGameModal}
-                    onSave={handleSaveNewPsGame}
+                    onSave={updatePsGames}
                 />
             )}
         </div>

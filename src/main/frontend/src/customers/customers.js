@@ -2,11 +2,9 @@ import React, {useEffect, useState} from 'react';
 import CustomersTableComponent from "./CustomersTableComponent";
 import {Button} from "@mui/material";
 import NewCustomerModal from "./NewCustomerModal";
-import Loader from "../loader/loader";
 
 const CustomersPage = () => {
     const [customersData, setCustomersData] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [isNewCustomerModalOpen, setNewCustomerModalOpen] = useState(false);
 
     useEffect(() => {
@@ -14,13 +12,16 @@ const CustomersPage = () => {
             .then(response => response.json())
             .then(data => {
                 setCustomersData(data);
-                setIsLoading(false);
+
             })
             .catch(error => {
                 console.error('Error fetching customers:', error);
-                setIsLoading(false); // Ensure loading state is updated even on error
             });
     }, []);
+
+    useEffect(() => {
+            setCustomersData(customersData); // Update local state when the clientData prop changes
+        }, [customersData]);
 
     const newCustomer = () => {
         setNewCustomerModalOpen(true);
@@ -30,9 +31,12 @@ const CustomersPage = () => {
         setNewCustomerModalOpen(false);
     };
 
-    const handleSaveNewCustomer = customer => {
-        setCustomersData(prevCustomers => [...prevCustomers, customer]);
-        handleCloseNewCustomerModal();
+    const updateCustomers = (customer) => {
+        console.log('customers : ',customer);
+        console.log('customers: ',customersData);
+
+        setCustomersData(prevCustomers=>[...prevCustomers,customer]);
+        console.log('Customers meta: ', customersData);
     };
 
     return (
@@ -46,18 +50,14 @@ const CustomersPage = () => {
                     </Button>
                 </div>
 
-                {isLoading ? (
-                    <Loader />
-                ) : (
                     <CustomersTableComponent customers={customersData} onChange={setCustomersData} />
-                )}
             </div>
 
             {isNewCustomerModalOpen && (
                 <NewCustomerModal
                     isOpen={isNewCustomerModalOpen}
                     onClose={handleCloseNewCustomerModal}
-                    onSave={handleSaveNewCustomer}
+                    onSave={updateCustomers}
                 />
             )}
         </div>

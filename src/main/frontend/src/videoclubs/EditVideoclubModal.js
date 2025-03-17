@@ -14,7 +14,7 @@ export default function EditVideoclubModal({isOpen, onClose, clientData, onSave}
         clientData.phone = editedData.phone;
 
 
-        fetch(`/videoclubs/${clientData.id}`,
+        fetch(`/videoClubs/${clientData.id}`,
             {
                 method: 'PUT',
                 body: JSON.stringify(clientData),

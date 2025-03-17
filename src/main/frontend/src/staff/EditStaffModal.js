@@ -4,16 +4,16 @@ import {Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Al
 export default function EditStaffModal({isOpen, onClose, clientData, onSave}) {
     const [editedData, setEditedData] = useState({...clientData});
     const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
-    const [videoclubsData, setVideoclubsData] = useState ([]);
+    const [videoClubsData, setVideoClubsData] = useState ([]);
 
     useEffect(() => {
         fetch('/videoClubs')
             .then(response => response.json())
             .then(data => {
-                setVideoclubsData(data);
+                setVideoClubsData(data);
             })
             .catch(error => {
-                console.error('Error fetching the videoclubs:', error);
+                console.error('Error fetching the videoClubs:', error);
             });
     }, []);
 
@@ -24,8 +24,10 @@ export default function EditStaffModal({isOpen, onClose, clientData, onSave}) {
     const handleSave = () => {
         clientData.name = editedData.name;
         clientData.phone = editedData.phone;
+        clientData.videoClub = editedData.videoClub;
+        clientData.videoClubId = editedData.videoClubId;
 
-        fetch(`/staff/${clientData.id}`,
+        fetch(`/staff/update/${clientData.id}`,
             {
                 method: 'PUT',
                 body: JSON.stringify(clientData),
@@ -58,21 +60,20 @@ export default function EditStaffModal({isOpen, onClose, clientData, onSave}) {
             ...prevData,
             [name]: value,
         }));
-        if (name === 'videoclubId') {
-            let videoclub = videoclubsData.find(c => c.id === value);
-            console.log('videoclub: ', videoclub);
+        if (name === 'videoClubId') {
+            let videoClub = videoClubsData.find(c => c.id === value);
+            console.log('videoClub: ', videoClub);
             setEditedData((prevData) => ({
                 ...prevData,
-                // eslint-disable-next-line
-                ['videoclub']: videoclub,
+                ['videoClub']: videoClub,
             }));
         }
-
     };
+
     return (
         <React.Fragment>
             <Dialog open={isOpen} onClose={onClose}>
-                <DialogTitle>Edit Staff</DialogTitle>
+                <DialogTitle>Edit Customer</DialogTitle>
                 <DialogContent>
                     <TextField
                         label="Name"
@@ -91,15 +92,15 @@ export default function EditStaffModal({isOpen, onClose, clientData, onSave}) {
                         margin="normal"
                     />
                     <Select
-                        label="Videoclub"
-                        name="videoclubId"
+                        label="videoClub"
+                        name="videoClubId"
                         value={editedData.videoClubId || editedData.videoClub.id}
                         onChange={(e) => handleInputChange(e)}
                         fullWidth
                         margin="normal"
                     >
                         {
-                            videoclubsData.map((videoclub) => (
+                            videoClubsData.map((videoclub) => (
                                 <MenuItem key={videoclub.id} value={videoclub.id}> {videoclub.name} </MenuItem>))
                         }
                     </Select>
@@ -119,4 +120,4 @@ export default function EditStaffModal({isOpen, onClose, clientData, onSave}) {
             </div>
         </React.Fragment>
     );
-}
+};

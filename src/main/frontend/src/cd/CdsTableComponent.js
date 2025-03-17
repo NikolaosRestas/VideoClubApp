@@ -15,24 +15,19 @@ export default function CdsTableComponent({cds,onChange}){
     const [selectedClient, setSelectedClient] = useState(null);
     const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
 
-    const handleEditModalOpen=(cd)=>{
+    function onEdit(cd){
+        console.log('Edit Cd:',cd);
         setSelectedClient(cd);
         setIsEditModalOpen(true);
     }
 
-    const handleEditModalClose=()=>{
-        setIsEditModalOpen(false);
-    }
-
-    const handleDelete = (cd) => {
+    function onDelete (cd){
            fetch(`/cd/delete/${cd.id}`, {
                method: 'DELETE',
                headers: { 'Content-Type': 'application/json' },
            })
                .then(response => {
                    if (response.ok) {
-                       setIsSuccessfulDelete({ cdName: cd.name });
-                       setIsSuccessfulDelete({ cdArtist: cd.artist});
                        setTimeout(() => {
                            setIsSuccessfulDelete(false);
                        }, 5000);
@@ -40,6 +35,10 @@ export default function CdsTableComponent({cds,onChange}){
                    }
                });
        };
+
+      const handleEditModalClose=()=>{
+           setIsEditModalOpen(false);
+      }
 
     return (
         <React.Fragment>
@@ -69,11 +68,11 @@ export default function CdsTableComponent({cds,onChange}){
                                 <TableCell align="right" className="py-3">{cd.videoClub.name}</TableCell>
                                 <TableCell align="right" className="py-3">{cd.customer.name}</TableCell>
                                 <TableCell align="right" className="py-3">
-                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => handleEditModalOpen(cd)}>
+                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => onEdit(cd)}>
                                         Edit
                                     </Button>
                                     <span className="inline-block w-4"></span> {/* This creates space */}
-                                    <Button variant="contained" color="primary" onClick={() => handleDelete(cd)}>
+                                    <Button variant="contained" color="primary" onClick={() => onDelete(cd,cds)}>
                                         Delete
                                     </Button>
                                 </TableCell>
@@ -88,6 +87,7 @@ export default function CdsTableComponent({cds,onChange}){
                     isOpen={isEditModalOpen}
                     onClose={handleEditModalClose}
                     clientData={selectedClient}
+                    onSave={onChange}
                 />
             )}
 

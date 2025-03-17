@@ -16,24 +16,20 @@ const MoviesTableComponent=({movies,onChange})=>{
     const [selectedClient, setSelectedClient] = useState(null);
     const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
 
-    const handleEditModalClose=()=>{
-        setIsEditModalOpen(false);
-    }
 
-    const handleEditModalOpen=(movie)=>{
+    function onEdit(movie){
+        console.log('Edit Movie',movie);
         setSelectedClient(movie);
         setIsEditModalOpen(true);
     }
 
-    const handleDelete = (movie) => {
+    function  onDelete(movie){
            fetch(`/movies/delete/${movie.id}`, {
                method: 'DELETE',
                headers: { 'Content-Type': 'application/json' },
            })
                .then(response => {
                    if (response.ok) {
-                       setIsSuccessfulDelete({ MovieTitle: movie.title });
-                       setIsSuccessfulDelete({ MovieYear: movie.year});
                        setTimeout(() => {
                            setIsSuccessfulDelete(false);
                        }, 5000);
@@ -41,6 +37,10 @@ const MoviesTableComponent=({movies,onChange})=>{
                    }
                });
        };
+
+    const handleEditModalClose=()=>{
+        setIsEditModalOpen(false);
+    }
 
     return (
         <React.Fragment>
@@ -70,11 +70,11 @@ const MoviesTableComponent=({movies,onChange})=>{
                                 <TableCell align="right" className="py-3">{movie.videoClub.name}</TableCell>
                                 <TableCell align="right" className="py-3">{movie.customer.name}</TableCell>
                                 <TableCell align="right" className="py-3">
-                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => handleEditModalOpen(movie)}>
+                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => onEdit(movie)}>
                                         Edit
                                     </Button>
                                     <span className="inline-block w-4"></span> {/* This creates space */}
-                                    <Button variant="contained" color="primary" onClick={() => handleDelete(movie)}>
+                                    <Button variant="contained" color="primary" onClick={() => onDelete(movie)}>
                                         Delete
                                     </Button>
                                 </TableCell>
@@ -89,6 +89,7 @@ const MoviesTableComponent=({movies,onChange})=>{
                     isOpen={isEditModalOpen}
                     onClose={handleEditModalClose}
                     clientData={selectedClient}
+                    onSave={onChange}
                 />
             )}
 

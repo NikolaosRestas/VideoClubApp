@@ -11,71 +11,81 @@ import {useState} from "react";
 import EditStaffModal from "./EditStaffModal";
 
 
-export default function StaffsTableComponent({ staffs, onChange }) {
-    const [isEditModalOpen, setIsEditModalOpen] = useState({});
+export default function StaffsTableComponent({staffs,onChange}) {
+
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
     const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
 
-    const handleEditModalOpen = (staff) => {
+    function onEdit(staff) {
+        console.log('Edit staff: ', staff);
         setSelectedClient(staff);
         setIsEditModalOpen(true);
-    };
+    }
 
-   const handleDelete = (staff) => {
-           fetch(`/staff/delete/${staff.id}`, {
-               method: 'DELETE',
-               headers: { 'Content-Type': 'application/json' },
-           })
-               .then(response => {
-                   if (response.ok) {
-                       setIsSuccessfulDelete({ staffName: staff.name });
-                       setIsSuccessfulDelete({ staffPhone: staff.phone});
-                       setTimeout(() => {
-                           setIsSuccessfulDelete(false);
-                       }, 5000);
-                       onChange(staffs.filter(c => c.id !== staff.id));
-                   }
-               });
-       };
+    function onDelete(staff) {
+        console.log('I am going to delete customer: ', staff);
+        fetch(`/staff/delete/${staff.id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    setIsSuccessfulDelete(true);
+                    setTimeout(() => {
+                        setIsSuccessfulDelete(false);
+                    }, 5000);
+                    onChange(staffs.filter(c => c.id !== staff.id));
+                }
+            });
+    }
 
-    const handleEditModalClose = () => {
+    const handleCloseEditModal = () => {
         setIsEditModalOpen(false);
     };
 
     return (
         <React.Fragment>
-            <TableContainer component={Paper} className="shadow-lg rounded-lg">
-                <Table className="min-w-max" aria-label="simple table">
+            <TableContainer component={Paper}>
+                <Table sx={{minWidth: 650}} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell className="font-bold">Id</TableCell>
-                            <TableCell align="right" className="font-bold">Name</TableCell>
-                            <TableCell align="right" className="font-bold">Phone</TableCell>
-                            <TableCell align="right" className="font-bold">Videoclub</TableCell>
-                            <TableCell align="right" className="font-bold">Actions</TableCell>
+                            <TableCell>Id</TableCell>
+                            <TableCell align="right">Name</TableCell>
+                            <TableCell align="right">Phone</TableCell>
+                            <TableCell align="right">VideoClub</TableCell>
+                            <TableCell align="right">Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {staffs.map((staff) => (
                             <TableRow
                                 key={staff.id}
-                                className="hover:bg-gray-100"
+                                sx={{'&:last-child td, &:last-child th': {border: 0}}}
                             >
-                                <TableCell component="th" scope="row" className="py-3">
+                                <TableCell component="th" scope="row">
                                     {staff.id}
                                 </TableCell>
-                                <TableCell align="right" className="py-3">{staff.name}</TableCell>
-                                <TableCell align="right" className="py-3">{staff.phone}</TableCell>
-                                <TableCell align="right" className="py-3">{staff.videoClub.name}</TableCell>
-                                <TableCell align="right" className="py-3">
-                                    <Button className="mr-2" variant="contained" color="primary" onClick={() => handleEditModalOpen(staff)}>
+                                <TableCell align="right">{staff.name}</TableCell>
+                                <TableCell align="right">{staff.phone}</TableCell>
+                                <TableCell align="right">{staff.videoClub.name}</TableCell>
+                                <TableCell align="right">
+
+                                    <Button variant="contained" color="primary" onClick={() => onEdit(staff)}>
                                         Edit
                                     </Button>
-                                    <span className="inline-block w-4"></span> {/* This creates space */}
-                                    <Button variant="contained" color="primary" onClick={() => handleDelete(staff)}>
+                                </TableCell>
+
+                                 <TableCell align="left">
+                                    <Button variant="contained" color="primary"
+                                            onClick={() => onDelete(staff, staffs)}>
                                         Delete
                                     </Button>
                                 </TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>
@@ -83,22 +93,19 @@ export default function StaffsTableComponent({ staffs, onChange }) {
             </TableContainer>
 
             {selectedClient && (
-                <EditStaffModal
-                    isOpen={isEditModalOpen}
-                    onClose={handleEditModalClose}
-                    clientData={selectedClient}
-                />
-            )}
+                    <EditStaffModal
+                        isOpen={isEditModalOpen}
+                        onClose={handleCloseEditModal}
+                        clientData={selectedClient}
+                        onSave={onChange}
+                    />
+                )}
 
-            {isSuccessfulDelete && (
                 <div className="relative h-32 flex flex-nowrap">
                     <div className="absolute inset-x-0 bottom-0 h-16 flex flex-nowrap">
-                        <Alert severity="success">
-                            The staff {isSuccessfulDelete.staffName} was deleted successfully!
-                        </Alert>
+                        {(isSuccessfulDelete === true) && <Alert severity="success">The staff deleted successful!</Alert>}
                     </div>
                 </div>
-            )}
         </React.Fragment>
     );
 }

@@ -67,6 +67,9 @@ public class PsGamesService {
         final VideoClub videoClub = videoClubService.findVideoClubById(psGamesRequestDto.getVideoClubId());
         final Customer customer = customerService.findCustomerById(psGamesRequestDto.getCustomerId());
 
+        updatedPsGame.setVideoClub(videoClub);
+        updatedPsGame.setCustomer(customer);
+
         psGamesRepository.save(updatedPsGame);
         System.out.println("PsGame Updated");
         return updatedPsGame;

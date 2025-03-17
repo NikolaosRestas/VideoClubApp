@@ -1,4 +1,3 @@
-import Loader from "../loader/loader";
 import React, {useEffect, useState} from 'react';
 import {Button} from "@mui/material";
 import MoviesTableComponent from "./MoviesTableComponent";
@@ -6,36 +5,40 @@ import NewMovieModal from "./NewMovieModal";
 
 const MoviesPage=()=>{
 
-    const [isLoading,setIsLoading] = useState(true);
-    const [moviesData,setmoviesData] = useState([]);
+    const [moviesData,setMoviesData] = useState([]);
     const [isNewMovieModalOpen,setIsNewMovieModal] = useState(false);
 
     useEffect(() => {
             fetch('/movies')
                 .then(response => response.json())
                 .then(data => {
-                    setmoviesData(data);
-                    setIsLoading(false);
+                    setMoviesData(data);
                 })
                 .catch(error => {
                     console.error('Error fetching movies:', error);
-                    setIsLoading(false); // Ensure loading state is updated even on error
                 });
         }, []);
 
+    useEffect(() => {
+        setMoviesData(moviesData); // Update local state when the clientData prop changes
+    }, [moviesData]);
+
+
+    function newMovie(){
+        setIsNewMovieModal(true);
+    }
 
     const handleCloseNewMovieModal=()=>{
         setIsNewMovieModal(false);
+    }
+
+    const updateMovies = (movie) => {
+        console.log('movies : ',movie);
+        console.log('movies: ',moviesData);
+
+        setMoviesData(prevMovies=>[...prevMovies,movie]);
+        console.log('Movies meta: ', moviesData);
     };
-
-    const handleSaveNewMovie=(movie)=>{
-        setmoviesData(prevmoviesData=>[...prevmoviesData,movie]);
-        handleCloseNewMovieModal();
-    }
-
-    const newMovie=()=>{
-        setIsNewMovieModal(true);
-    }
 
     return (
         <div className="flex justify-center">
@@ -47,19 +50,14 @@ const MoviesPage=()=>{
                         New Movie
                     </Button>
                 </div>
-
-                {isLoading ? (
-                    <Loader />
-                ) : (
-                    <MoviesTableComponent movies={moviesData} onChange={setmoviesData} />
-                )}
+                  <MoviesTableComponent movies={moviesData} onChange={setMoviesData} />
             </div>
 
             {isNewMovieModalOpen && (
                 <NewMovieModal
                     isOpen={isNewMovieModalOpen}
                     onClose={handleCloseNewMovieModal}
-                    onSave={handleSaveNewMovie}
+                    onSave={updateMovies}
                 />
             )}
         </div>

@@ -5,7 +5,6 @@ import com.example.VideoClubApp.repository.VideoClubRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VideoClubService {

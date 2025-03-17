@@ -2,62 +2,64 @@ import React, {useEffect, useState} from 'react';
 import StaffsTableComponent from "./StaffsTableComponent";
 import {Button} from "@mui/material";
 import NewStaffModal from "./NewStaffModal";
-import Loader from "../loader/loader";
 
 const StaffsPage = () => {
     const [staffsData, setStaffsData] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [isNewStaffModalOpen, setNewStaffModalOpen] = useState(false);
 
     useEffect(() => {
+        // Function to fetch customers data from the API
         fetch('/staff')
             .then(response => response.json())
             .then(data => {
                 setStaffsData(data);
-                setIsLoading(false);
-            })
-            .catch(error => {
-                console.error('Error fetching staffs:', error);
-                setIsLoading(false); // Ensure loading state is updated even on error
             });
-    }, []);
 
-    const newStaff = () => {
+        return () => {
+            // Any cleanup code can go here
+        };
+    }, []); // Empty dependency array means this effect runs only once when the component mounts
+
+    useEffect(() => {
+        setStaffsData(staffsData); // Update local state when the clientData prop changes
+    }, [staffsData]);
+
+    function newStaff() {
         setNewStaffModalOpen(true);
-    };
+    }
 
     const handleCloseNewStaffModal = () => {
         setNewStaffModalOpen(false);
     };
 
-    const handleSaveNewStaff = staff => {
-        setStaffsData(prevStaffs => [...prevStaffs, staff]);
-        handleCloseNewStaffModal();
+    const updateStaffs = (staff) => {
+        console.log('staffs : ',staff);
+        console.log('Staffs: ',staffsData);
+
+        setStaffsData(prevStaffs=>[...prevStaffs,staff]);
+        console.log('Customers meta: ', staffsData);
     };
 
     return (
-        <div className="flex justify-center">
-            <div className="container mx-4 mt-8 w-full max-w-screen-lg">
-                <h3 className="text-3xl font-bold mb-4">Staffs</h3>
+       <div className="flex justify-center">
+                   <div className="container mx-4 mt-8 w-full max-w-screen-lg">
+                       <h3 className="text-3xl font-bold mb-4">Staffs</h3>
 
-                <div className="text-right mb-4">
-                    <Button variant="contained" color="primary" onClick={newStaff}>
-                        New Staff
-                    </Button>
-                </div>
+                       <div className="text-right mb-4">
+                           <Button variant="contained" color="primary"
+                                   onClick={() => newStaff()}>
+                               New Staff
+                           </Button>
+                       </div>
 
-                {isLoading ? (
-                    <Loader />
-                ) : (
-                    <StaffsTableComponent staffs={staffsData} onChange={setStaffsData} />
-                )}
-            </div>
+                       <StaffsTableComponent staffs={staffsData} onChange={setStaffsData}/>
+                   </div>
 
             {isNewStaffModalOpen && (
                 <NewStaffModal
                     isOpen={isNewStaffModalOpen}
                     onClose={handleCloseNewStaffModal}
-                    onSave={handleSaveNewStaff}
+                    onSave={updateStaffs}
                 />
             )}
         </div>
