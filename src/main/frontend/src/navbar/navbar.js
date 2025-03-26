@@ -12,7 +12,7 @@ export default function Navbar() {
                         <MenuIcon/>
                     </IconButton>
                     <Typography variant="h6" className="text-white">
-                        Trip App
+                        VideClub App
                     </Typography>
                     <Button color="inherit" className="text-gray-500" component={Link} to="/homePage">Home</Button>
                     <Button color="inherit" className="text-gray-500" component={Link} to="/videoClubs">Videoclubs</Button>
