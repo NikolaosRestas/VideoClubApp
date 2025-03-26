@@ -47,7 +47,7 @@ public class StaffService {
                 .name(staffRequestDto.getName())
                 .phone(staffRequestDto.getPhone())
                 .videoClub(videoClub).build();
-
+        System.out.println("Staff added");
         return staffRepository.save(staff);
     }
 

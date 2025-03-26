@@ -1,6 +1,7 @@
 package com.example.VideoClubApp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Entity
@@ -10,10 +11,13 @@ public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    @NotBlank(message="name should not be empty")
     @Column(name="name")
     private String name;
+    @NotBlank(message="phone should not be empty")
     @Column(name="phone")
     private String phone;
+    @NotBlank(message="email should not be empty")
     @Column(name="email")
     private String email;
 

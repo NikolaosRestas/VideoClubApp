@@ -3,6 +3,7 @@ package com.example.VideoClubApp.controller;
 import com.example.VideoClubApp.model.PsGames;
 import com.example.VideoClubApp.model.dto.PsGamesRequestDto;
 import com.example.VideoClubApp.service.PsGamesService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,13 +42,13 @@ public class PsGamesController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<PsGames> addPsGame(@RequestBody PsGamesRequestDto psGamesRequestDto){
+    public ResponseEntity<PsGames> addPsGame(@Valid @RequestBody PsGamesRequestDto psGamesRequestDto){
         System.out.println("PsGame Created");
         return new ResponseEntity<PsGames>(psGamesService.insertPsGame(psGamesRequestDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public PsGames updatePsGame(@RequestBody PsGamesRequestDto psGamesRequestDto, @PathVariable("id") Long id){
+    public PsGames updatePsGame(@Valid @RequestBody PsGamesRequestDto psGamesRequestDto, @PathVariable("id") Long id){
         return psGamesService.updatePsGame(psGamesRequestDto,id);
     }
 }

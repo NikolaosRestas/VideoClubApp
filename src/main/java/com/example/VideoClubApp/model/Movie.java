@@ -1,6 +1,7 @@
 package com.example.VideoClubApp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Entity
@@ -10,7 +11,11 @@ public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    @NotBlank(message="title must not be empty")
+    @Column(name="title")
     private String title;
+    @NotBlank(message="year must not be empty")
+    @Column(name="year")
     private String year;
     @ManyToOne
     @JoinColumn(name="videoClub_key")

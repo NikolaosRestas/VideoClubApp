@@ -32,11 +32,13 @@ public class MovieService {
 
     public boolean deleteAllMovies(){
         movieRepository.deleteAll();
+        System.out.println("All movies have been deleted");
         return true;
     }
 
     public boolean deleteMovieById(Long id){
         movieRepository.deleteById(id);
+        System.out.println("Movie has been deleted");
         return true;
     }
     public Movie insertMovie(MovieRequestDto movieRequestDto){

@@ -27,11 +27,13 @@ public class PsGamesService {
 
     public boolean deletePsGameById(Long id){
         psGamesRepository.deleteById(id);
+        System.out.println("Customer deleted");
         return true;
     }
 
     public boolean deleteAllPsGames(){
         psGamesRepository.deleteAll();
+        System.out.println("All customers have been deleted");
         return true;
     }
 

@@ -3,6 +3,7 @@ package com.example.VideoClubApp.controller;
 import com.example.VideoClubApp.model.Cd;
 import com.example.VideoClubApp.model.dto.CdRequestDto;
 import com.example.VideoClubApp.service.CdService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class CdController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Cd> addCd(@RequestBody CdRequestDto cdRequestDto){
+    public ResponseEntity<Cd> addCd(@Valid @RequestBody CdRequestDto cdRequestDto){
         final Cd createdCd = cdService.insertCd(cdRequestDto);
         System.out.println("Customer Created");
         return new ResponseEntity<>(createdCd,HttpStatus.CREATED);
@@ -50,7 +51,7 @@ public class CdController {
     }
 
     @PutMapping("/update/{id}")
-    public Cd updateCd(@RequestBody CdRequestDto cd, @PathVariable("id") Long id){
+    public Cd updateCd(@Valid @RequestBody CdRequestDto cd, @PathVariable("id") Long id){
         System.out.println("Cd updated successfully");
         return cdService.updateCd(cd,id);
     }

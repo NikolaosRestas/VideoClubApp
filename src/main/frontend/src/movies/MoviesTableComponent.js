@@ -10,35 +10,39 @@ import {Alert,Button} from "@mui/material";
 import {useState} from "react";
 import EditMovieModal from "./EditMovieModal";
 
-const MoviesTableComponent=({movies,onChange})=>{
-
-    const [isEditModalOpen, setIsEditModalOpen] = useState({});
+const MoviesTableComponent = ({ movies, onChange }) => {
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
-    const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
+    const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(null); // Store movie title here
 
-
-    function onEdit(movie){
-        console.log('Edit Movie',movie);
+    function onEdit(movie) {
+        console.log('Edit Movie', movie);
         setSelectedClient(movie);
         setIsEditModalOpen(true);
     }
 
-    function  onDelete(movie){
-           fetch(`/movies/delete/${movie.id}`, {
-               method: 'DELETE',
-               headers: { 'Content-Type': 'application/json' },
-           })
-               .then(response => {
-                   if (response.ok) {
-                       setTimeout(() => {
-                           setIsSuccessfulDelete(false);
-                       }, 5000);
-                       onChange(movies.filter(c => c.id !== movie.id));
-                   }
-               });
-       };
+    function onDelete(movie) {
+        fetch(`/movies/delete/${movie.id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(response => {
+            if (response.ok) {
+                // Set the movie title to show in the alert
+                setIsSuccessfulDelete(movie.title);
 
-    const handleEditModalClose=()=>{
+                // Update the movies list after deletion
+                onChange(movies.filter(c => c.id !== movie.id));
+
+                // Hide the alert after 5 seconds
+                setTimeout(() => {
+                    setIsSuccessfulDelete(null);
+                }, 5000);
+            }
+        });
+    }
+
+    const handleEditModalClose = () => {
         setIsEditModalOpen(false);
     }
 
@@ -58,13 +62,8 @@ const MoviesTableComponent=({movies,onChange})=>{
                     </TableHead>
                     <TableBody>
                         {movies.map((movie) => (
-                            <TableRow
-                                key={movie.id}
-                                className="hover:bg-gray-100"
-                            >
-                                <TableCell component="th" scope="row" className="py-3">
-                                    {movie.id}
-                                </TableCell>
+                            <TableRow key={movie.id} className="hover:bg-gray-100">
+                                <TableCell component="th" scope="row" className="py-3">{movie.id}</TableCell>
                                 <TableCell align="right" className="py-3">{movie.title}</TableCell>
                                 <TableCell align="right" className="py-3">{movie.year}</TableCell>
                                 <TableCell align="right" className="py-3">{movie.videoClub.name}</TableCell>
@@ -93,16 +92,16 @@ const MoviesTableComponent=({movies,onChange})=>{
                 />
             )}
 
+            {/* Alert will be shown here if a movie was deleted successfully */}
             {isSuccessfulDelete && (
-                <div className="relative h-32 flex flex-nowrap">
-                    <div className="absolute inset-x-0 bottom-0 h-16 flex flex-nowrap">
-                        <Alert severity="success">
-                            The movie {isSuccessfulDelete.MovieTitle} was deleted successfully!
-                        </Alert>
-                    </div>
+                <div className="fixed bottom-4 right-4 z-50">
+                    <Alert severity="success">
+                        The movie "{isSuccessfulDelete}" was deleted successfully!
+                    </Alert>
                 </div>
             )}
         </React.Fragment>
     );
 };
+
 export default MoviesTableComponent;

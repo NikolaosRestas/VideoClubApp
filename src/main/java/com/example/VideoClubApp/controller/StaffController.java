@@ -3,6 +3,7 @@ package com.example.VideoClubApp.controller;
 import com.example.VideoClubApp.model.Staff;
 import com.example.VideoClubApp.model.dto.StaffRequestDto;
 import com.example.VideoClubApp.service.StaffService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,14 +46,14 @@ public class StaffController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Staff> addStaff(@RequestBody StaffRequestDto staff){
+    public ResponseEntity<Staff> addStaff( @Valid @RequestBody StaffRequestDto staff){
         final Staff createdStaff = staffService.insertStaff(staff);
         System.out.println("Staff has been created");
         return new ResponseEntity<>(createdStaff,HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Staff> updatedStaff(@RequestBody StaffRequestDto staff, @PathVariable("id") Long id){
+    public ResponseEntity<Staff> updatedStaff(@Valid @RequestBody StaffRequestDto staff, @PathVariable("id") Long id){
         Staff updatedStaff = staffService.updateStaff(staff,id);
         return new ResponseEntity<>(updatedStaff,HttpStatus.OK);
     }

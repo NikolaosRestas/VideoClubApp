@@ -1,70 +1,66 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField,MenuItem,Select} from '@mui/material';
 
-export default function NewPsGameModal({isOpen,onClose,onSave}){
-    const [psgame,setpsgame] = useState({title:""});
-    const [isSuccessAlertOpen,setIsSuccessAlertOpen] = useState(false);
-    const [videoclubsData,setVideoclubsData] = useState([]);
-    const [customersData,setCustomersData] = useState([]);
-
+export default function NewPsGameModal({ isOpen, onClose, onSave }) {
+    const [psgame, setpsgame] = useState({ title: "" });
+    const [isSuccessAlertOpen, setIsSuccessAlertOpen] = useState(false);
+    const [videoclubsData, setVideoclubsData] = useState([]);
+    const [customersData, setCustomersData] = useState([]);
 
     useEffect(() => {
         Promise.all([
-            fetch('/videoClubs').then(response => response.json()),
-            fetch('/customers').then(response => response.json())
+            fetch("/videoClubs").then(response => response.json()),
+            fetch("/customers").then(response => response.json())
         ])
-        .then(([videoClubsData, customersData]) => {
-            setVideoclubsData(videoClubsData);
-            setCustomersData(customersData);
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        });
+            .then(([videoClubsData, customersData]) => {
+                setVideoclubsData(videoClubsData);
+                setCustomersData(customersData);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
     }, []);
 
-    useEffect(() => {
-        setpsgame({...psgame}); // Update local state when the clientData prop changes
-    }, [psgame]);
-
     const handleSave = () => {
-        fetch(`/PsGames/add`,
-            {
-                method: 'POST',
-                body: JSON.stringify(psgame),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
+        fetch(`/PsGames/add`, {
+            method: "POST",
+            body: JSON.stringify(psgame),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
             .then(response => response.json())
-            .then((data) => {
+            .then(data => {
                 onSave(data);
                 setIsSuccessAlertOpen(true);
+
+                // Delay modal close to allow alert visibility
                 setTimeout(() => {
                     setIsSuccessAlertOpen(false);
-                }, 5000);
+                    onClose();
+                }, 3000);
             })
-            .catch((error) => {
-                console.error('Error while calling the API:', error);
+            .catch(error => {
+                console.error("Error while calling the API:", error);
             });
 
         console.log("Save changes:", psgame);
-        onClose(); // Close the modal after saving (you can modify this based on your requirements).
     };
 
     const handleCancel = () => {
-        onClose(); // Close the modal without saving.
+        onClose();
     };
 
     const handleInputChange = (event) => {
-        const {name, value} = event.target;
-        setpsgame((prevData) => ({
+        const { name, value } = event.target;
+        setpsgame(prevData => ({
             ...prevData,
             [name]: value,
         }));
     };
 
     return (
-        <React.Fragment>
+        <>
             <Dialog open={isOpen} onClose={onClose}>
                 <DialogTitle>New PsGame</DialogTitle>
                 <DialogContent>
@@ -72,69 +68,53 @@ export default function NewPsGameModal({isOpen,onClose,onSave}){
                         label="Title"
                         name="title"
                         value={psgame.title}
-                        onChange={(e) => handleInputChange(e)}
+                        onChange={handleInputChange}
                         fullWidth
                         margin="normal"
                     />
                     <TextField
                         label="Console"
                         name="console"
-                        value={psgame.console}
-                        onChange={(e) => handleInputChange(e)}
+                        value={psgame.console || ""}
+                        onChange={handleInputChange}
                         fullWidth
                         margin="normal"
                     />
                     <TextField
                         label="Company"
                         name="company"
-                        value={psgame.company}
-                        onChange={(e) => handleInputChange(e)}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="VideoClub"
-                        name="videoClubId"
-                        value={psgame.videoClubId}
-                        onChange={(e) => handleInputChange(e)}
+                        value={psgame.company || ""}
+                        onChange={handleInputChange}
                         fullWidth
                         margin="normal"
                     />
                     <Select
-                        label="Videoclub"
+                        displayEmpty
                         name="videoClubId"
-                        value={psgame.videoClubId}
-                        onChange={(e) => handleInputChange(e)}
+                        value={psgame.videoClubId || ""}
+                        onChange={handleInputChange}
                         fullWidth
-                        margin="normal"
                     >
-                        <MenuItem value="VideoClub Empty" disabled>Select a Videoclub </MenuItem>
-                        {
-                            videoclubsData.map((videoclub) => (
-                                <MenuItem key={videoclub.id} value={videoclub.id}> {videoclub.name} </MenuItem>))
-                        }
+                        <MenuItem value="" disabled>Select a Videoclub</MenuItem>
+                        {videoclubsData.map(videoclub => (
+                            <MenuItem key={videoclub.id} value={videoclub.id}>
+                                {videoclub.name}
+                            </MenuItem>
+                        ))}
                     </Select>
-                    <TextField
-                        label="Customer"
-                        name="customerId"
-                        value={psgame.customerId}
-                        onChange={(e) => handleInputChange(e)}
-                        fullWidth
-                        margin="normal"
-                    />
                     <Select
-                        label="Customer"
+                        displayEmpty
                         name="customerId"
-                        value={psgame.customerId}
-                        onChange={(e) => handleInputChange(e)}
+                        value={psgame.customerId || ""}
+                        onChange={handleInputChange}
                         fullWidth
-                        margin="normal"
                     >
-                        <MenuItem value="Customer Empty" disabled>Select a Customer </MenuItem>
-                        {
-                            customersData.map((customer) => (
-                                <MenuItem key={customer.id} value={customer.id}> {customer.name} </MenuItem>))
-                        }
+                        <MenuItem value="" disabled>Select a Customer</MenuItem>
+                        {customersData.map(customer => (
+                            <MenuItem key={customer.id} value={customer.id}>
+                                {customer.name}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </DialogContent>
                 <DialogActions>
@@ -143,13 +123,12 @@ export default function NewPsGameModal({isOpen,onClose,onSave}){
                         Save
                     </Button>
                 </DialogActions>
-            </Dialog>
-
-            <div className="relative h-32 flex flex-nowrap">
-                <div className="absolute inset-x-0 bottom-0 h-16 flex flex-nowrap">
-                    {isSuccessAlertOpen && <Alert severity="success">The psGame added successfully!</Alert>}
+                {isSuccessAlertOpen && (
+                <div className="fixed bottom-4 right-4 z-50">
+                    <Alert severity="success">The PS Game was added successfully!</Alert>
                 </div>
-            </div>
-        </React.Fragment>
+            )}
+            </Dialog>
+        </>
     );
 }

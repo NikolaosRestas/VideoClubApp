@@ -10,38 +10,44 @@ import {Alert,Button} from "@mui/material";
 import {useState} from "react";
 import EditPsGameModal from "./EditPsGameModal";
 
-export default function PsGamesTableComponent({PsGames,onChange}){
-    const [isEditModalOpen, setIsEditModalOpen] = useState({});
+export default function PsGamesTableComponent({ PsGames, onChange }) {
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState(null);
-    const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
+    const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(null);
 
-   function onEdit(PsGame){
-        console.log('Edit PsGame:',PsGame);
+    function onEdit(PsGame) {
+        console.log("Edit PsGame:", PsGame);
         setSelectedClient(PsGame);
         setIsEditModalOpen(true);
-   }
-
-    const handleEditModalClose=()=>{
-        setIsEditModalOpen(false);
     }
 
-    function onDelete (PsGame){
-           fetch(`/PsGames/delete/${PsGame.id}`, {
-               method: 'DELETE',
-               headers: { 'Content-Type': 'application/json' },
-           })
-               .then(response => {
-                   if (response.ok) {
-                       setTimeout(() => {
-                           setIsSuccessfulDelete(false);
-                       }, 5000);
-                       onChange(PsGames.filter(c => c.id !== PsGame.id));
-                   }
-               });
-       };
+    const handleEditModalClose = () => {
+        setIsEditModalOpen(false);
+    };
+
+    function onDelete(PsGame) {
+        fetch(`/PsGames/delete/${PsGame.id}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(response => {
+                if (response.ok) {
+                    setIsSuccessfulDelete(PsGame.title); // Store the deleted game's title
+                    onChange(PsGames.filter(c => c.id !== PsGame.id));
+
+                    // Remove the success message after 5 seconds
+                    setTimeout(() => {
+                        setIsSuccessfulDelete(null);
+                    }, 5000);
+                }
+            })
+            .catch(error => {
+                console.error("Error deleting the PsGame:", error);
+            });
+    }
 
     return (
-        <React.Fragment>
+        <>
             <TableContainer component={Paper} className="shadow-lg rounded-lg">
                 <Table className="min-w-max" aria-label="simple table">
                     <TableHead>
@@ -57,13 +63,8 @@ export default function PsGamesTableComponent({PsGames,onChange}){
                     </TableHead>
                     <TableBody>
                         {PsGames.map((PsGame) => (
-                            <TableRow
-                                key={PsGame.id}
-                                className="hover:bg-gray-100"
-                            >
-                                <TableCell component="th" scope="row" className="py-3">
-                                    {PsGame.id}
-                                </TableCell>
+                            <TableRow key={PsGame.id} className="hover:bg-gray-100">
+                                <TableCell component="th" scope="row" className="py-3">{PsGame.id}</TableCell>
                                 <TableCell align="right" className="py-3">{PsGame.title}</TableCell>
                                 <TableCell align="right" className="py-3">{PsGame.console}</TableCell>
                                 <TableCell align="right" className="py-3">{PsGame.company}</TableCell>
@@ -73,8 +74,8 @@ export default function PsGamesTableComponent({PsGames,onChange}){
                                     <Button className="mr-2" variant="contained" color="primary" onClick={() => onEdit(PsGame)}>
                                         Edit
                                     </Button>
-                                    <span className="inline-block w-4"></span> {/* This creates space */}
-                                    <Button variant="contained" color="primary" onClick={() => onDelete(PsGame,PsGames)}>
+                                    <span className="inline-block w-4"></span> {/* Adds spacing */}
+                                    <Button variant="contained" color="primary" onClick={() => onDelete(PsGame)}>
                                         Delete
                                     </Button>
                                 </TableCell>
@@ -84,6 +85,7 @@ export default function PsGamesTableComponent({PsGames,onChange}){
                 </Table>
             </TableContainer>
 
+            {/* Edit Modal */}
             {selectedClient && (
                 <EditPsGameModal
                     isOpen={isEditModalOpen}
@@ -93,15 +95,14 @@ export default function PsGamesTableComponent({PsGames,onChange}){
                 />
             )}
 
+            {/* Success Alert */}
             {isSuccessfulDelete && (
-                <div className="relative h-32 flex flex-nowrap">
-                    <div className="absolute inset-x-0 bottom-0 h-16 flex flex-nowrap">
-                        <Alert severity="success">
-                            The psgame {isSuccessfulDelete.PsGameTitle} was deleted successfully!
-                        </Alert>
-                    </div>
+                <div className="fixed bottom-4 right-4 z-50">
+                    <Alert severity="success">
+                        The PsGame "{isSuccessfulDelete}" was deleted successfully!
+                    </Alert>
                 </div>
             )}
-        </React.Fragment>
+        </>
     );
 }

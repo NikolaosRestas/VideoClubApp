@@ -10,40 +10,48 @@ import { Alert, Button } from "@mui/material";
 import EditVideoclubModal from "./EditVideoclubModal";
 
 export default function VideoclubsTableComponent({ videoclubs, onChange }) {
-    const [isEditModalOpen, setIsEditModalOpen] = useState({});
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedVideoclub, setSelectedVideoclub] = useState(null);
-    const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(false);
+    const [isSuccessfulDelete, setIsSuccessfulDelete] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const handleEditModalOpen = (videoclub) => {
         setSelectedVideoclub(videoclub);
         setIsEditModalOpen(true);
     };
 
-   const handleDelete = (videoclub) => {
-           fetch(`/videoClubs/delete/${videoclub.id}`, {
-               method: 'DELETE',
-               headers: { 'Content-Type': 'application/json' },
-           })
-               .then(response => {
-                   if (response.ok) {
-                       setIsSuccessfulDelete({ videoclubName: videoclub.name });
-                       setIsSuccessfulDelete({ videoclubPhone: videoclub.phone});
-                       setTimeout(() => {
-                           setIsSuccessfulDelete(false);
-                       }, 5000);
-                       onChange(videoclubs.filter(c => c.id !== videoclub.id));
-                   }
-               });
-       };
+    const handleDelete = (videoclub) => {
+        fetch(`/videoClubs/delete/${videoclub.id}`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        })
+            .then(response => {
+                if (response.ok) {
+                    setIsSuccessfulDelete({
+                        videoclubName: videoclub.name,
+                        videoclubPhone: videoclub.phone
+                    });
+
+                    setTimeout(() => setIsSuccessfulDelete(null), 5000);
+                    onChange(videoclubs.filter(c => c.id !== videoclub.id));
+                } else {
+                    throw new Error("Failed to delete the videoclubs.");
+                }
+            })
+            .catch(error => {
+                setErrorMessage(`Error: Could not delete ${videoclub.name} because it a key to other entities. Try and delete those first.`);
+                setTimeout(() => setErrorMessage(null), 5000);
+            });
+    };
 
     const handleEditModalClose = () => {
         setIsEditModalOpen(false);
     };
 
     return (
-        <React.Fragment>
+        <>
             <TableContainer component={Paper} className="shadow-lg rounded-lg">
-                <Table className="min-w-max" aria-label="simple table">
+                <Table className="min-w-max" aria-label="videoclub table">
                     <TableHead>
                         <TableRow>
                             <TableCell className="font-bold">Id</TableCell>
@@ -54,13 +62,8 @@ export default function VideoclubsTableComponent({ videoclubs, onChange }) {
                     </TableHead>
                     <TableBody>
                         {videoclubs.map((videoclub) => (
-                            <TableRow
-                                key={videoclub.id}
-                                className="hover:bg-gray-100"
-                            >
-                                <TableCell component="th" scope="row" className="py-3">
-                                    {videoclub.id}
-                                </TableCell>
+                            <TableRow key={videoclub.id} className="hover:bg-gray-100">
+                                <TableCell className="py-3">{videoclub.id}</TableCell>
                                 <TableCell align="right" className="py-3">{videoclub.name}</TableCell>
                                 <TableCell align="right" className="py-3">{videoclub.phone}</TableCell>
                                 <TableCell align="right" className="py-3">
@@ -86,15 +89,21 @@ export default function VideoclubsTableComponent({ videoclubs, onChange }) {
                 />
             )}
 
+            {/* Success Message */}
             {isSuccessfulDelete && (
-                <div className="relative h-32 flex flex-nowrap">
-                    <div className="absolute inset-x-0 bottom-0 h-16 flex flex-nowrap">
-                        <Alert severity="success">
-                            The videoclub {isSuccessfulDelete.videoclubName} was deleted successfully!
-                        </Alert>
-                    </div>
+                <div className="relative h-32 flex justify-center">
+                    <Alert severity="success">
+                        The videoclub <strong>{isSuccessfulDelete.videoclubName}</strong> was deleted successfully!
+                    </Alert>
                 </div>
             )}
-        </React.Fragment>
+
+            {/* Error Message */}
+            {errorMessage && (
+                <div className="relative h-32 flex justify-center">
+                    <Alert severity="error">{errorMessage}</Alert>
+                </div>
+            )}
+        </>
     );
 }

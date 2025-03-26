@@ -2,6 +2,7 @@ package com.example.VideoClubApp.controller;
 
 import com.example.VideoClubApp.model.Customer;
 import com.example.VideoClubApp.model.dto.CustomerRequestDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class CustomerController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Customer> addCustomer(@RequestBody CustomerRequestDto customer){
+    public ResponseEntity<Customer> addCustomer(@Valid @RequestBody CustomerRequestDto customer){
         final Customer createdCustomer = customerService.insertCustomer(customer);
         System.out.println("Customer Created");
         return new ResponseEntity<>(createdCustomer,HttpStatus.CREATED);
@@ -52,7 +53,7 @@ public class CustomerController {
     }
 
     @PutMapping("/update/{id}")
-    public Customer updateCustomer(@RequestBody CustomerRequestDto customer, @PathVariable("id") Long id){
+    public Customer updateCustomer(@Valid @RequestBody CustomerRequestDto customer, @PathVariable("id") Long id){
         System.out.println("Customer updated successfully");
         return customerService.updateCustomer(customer,id);
     }

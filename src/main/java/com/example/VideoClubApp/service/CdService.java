@@ -71,6 +71,7 @@ public class CdService {
 
         savedCd.setVideoClub(videoClub);
         savedCd.setCustomer(customer);
+        System.out.println("Cd updated");
         return cdRepository.save(savedCd);
     }
 }

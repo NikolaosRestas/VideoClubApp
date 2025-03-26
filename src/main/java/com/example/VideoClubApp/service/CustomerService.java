@@ -34,6 +34,7 @@ public class CustomerService {
                 .email(customerRequestDto.getEmail())
                 .phone(customerRequestDto.getPhone())
                 .videoClub(videoClub).build();
+        System.out.println("Customer added");
         return customerRepository.save(customer);
     }
 
@@ -45,6 +46,7 @@ public class CustomerService {
 
     public boolean deleteCustomerById(Long id){
         customerRepository.deleteById(id);
+        System.out.println("Customer has been deleted");
         return true;
     }
 
@@ -56,6 +58,7 @@ public class CustomerService {
         final VideoClub videoClub = videoClubService.findVideoClubById(customerRequestDto.getVideoClubId());
 
         savedCustomer.setVideoClub(videoClub);
+        System.out.println("Customer updated");
         return customerRepository.save(savedCustomer);
 
     }

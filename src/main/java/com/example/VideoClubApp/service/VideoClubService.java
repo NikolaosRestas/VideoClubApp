@@ -29,14 +29,17 @@ public class VideoClubService {
     public String deleteVideoClubById(Long id){
         VideoClub videoClub = videoClubRepository.findById(id).orElse(null);
         if(videoClub == null){
+            System.out.println("VideoClub does not exists");
             return "VideoClub does not exists";
         }
         videoClubRepository.deleteById(id);
+        System.out.println("VideoClub deleted successfully");
         return "VideoClub deleted successfully";
     }
 
     public VideoClub insertVideoClub(VideoClub videoClub){
         videoClub.setId(null);
+        System.out.println("VideoClub inserted");
         return videoClubRepository.save(videoClub);
     }
 

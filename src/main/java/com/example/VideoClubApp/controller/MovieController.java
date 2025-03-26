@@ -3,6 +3,7 @@ package com.example.VideoClubApp.controller;
 import com.example.VideoClubApp.model.Movie;
 import com.example.VideoClubApp.model.dto.MovieRequestDto;
 import com.example.VideoClubApp.service.MovieService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class MovieController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Movie> addMovie(@RequestBody MovieRequestDto movieRequestDto){
+    public ResponseEntity<Movie> addMovie(@Valid @RequestBody MovieRequestDto movieRequestDto){
         return new ResponseEntity<Movie>(movieService.insertMovie(movieRequestDto),HttpStatus.CREATED);
     }
 
@@ -49,7 +50,7 @@ public class MovieController {
     }
 
     @PutMapping("/update/{id}")
-    public Movie updateMovie(@RequestBody MovieRequestDto movieRequestDto,@PathVariable("id") Long id){
+    public Movie updateMovie(@Valid @RequestBody MovieRequestDto movieRequestDto, @PathVariable("id") Long id){
         return movieService.updateMovie(movieRequestDto,id);
     }
 

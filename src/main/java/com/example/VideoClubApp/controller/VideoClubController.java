@@ -2,6 +2,7 @@ package com.example.VideoClubApp.controller;
 
 import com.example.VideoClubApp.model.VideoClub;
 import com.example.VideoClubApp.service.VideoClubService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class VideoClubController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<VideoClub> addVideoClub(@RequestBody VideoClub videoClub){
+    public ResponseEntity<VideoClub> addVideoClub(@Valid @RequestBody VideoClub videoClub){
         final VideoClub createdVideoClub = videoClubService.insertVideoClub(videoClub);
         return new ResponseEntity<VideoClub>(createdVideoClub,HttpStatus.CREATED);
     }
@@ -50,7 +51,7 @@ public class VideoClubController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VideoClub> updateVideoClub(@RequestBody VideoClub videoClub){
+    public ResponseEntity<VideoClub> updateVideoClub(@Valid @RequestBody VideoClub videoClub){
         videoClubService.updateVideoClub(videoClub);
         VideoClub updatedVideoClub = videoClubService.updateVideoClub(videoClub);
         return new ResponseEntity<>(updatedVideoClub,HttpStatus.OK);
