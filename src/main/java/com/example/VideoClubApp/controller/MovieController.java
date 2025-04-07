@@ -43,7 +43,7 @@ public class MovieController {
         return true;
     }
     @DeleteMapping("/delete/{id}")
-    public boolean deleteAllMovies(@PathVariable("id") Long id){
+    public boolean deleteMovieById(@PathVariable("id") Long id){
         movieService.deleteMovieById(id);
         System.out.println("Movie with id:"+id + " has been deleted");
         return true;
